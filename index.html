@@ -3,230 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio Pro - Revenue Edition</title>
+    <title>Studio Pro - Professional Edition</title>
     
     <script src="https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js"></script>
-    
     <script src="https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --p: #e2d1f9; --pk: #ffdae9; --g: #ffd700; --b: #00d2ff;
-            --bg: #0b141a; --pnl: rgba(23, 33, 39, 0.98); --txt: white; --wp: 0.1;
+            --p: #e2d1f9; --pnl: rgba(23, 33, 39, 0.98); --txt: white; --g: #ffd700;
         }
         body {
-            margin: 0; background: var(--bg); color: var(--txt);
+            margin: 0; background: #0b141a; color: var(--txt);
             font-family: 'Segoe UI', sans-serif; height: 100vh;
-            overflow: hidden; transition: 0.5s; user-select: none;
+            overflow: hidden; user-select: none;
         }
         
-        #videoContainer { position: fixed; inset: 0; z-index: 1; background: #000; display: flex; justify-content: center; align-items: center; }
-        #shortsFrame, #localVideo { width: 100%; height: 100%; border: none; display: none; object-fit: cover; }
+        #videoContainer { position: fixed; inset: 0; z-index: 1; background: #000; }
+        #shortsFrame, #localVideo { width: 100%; height: 100%; object-fit: cover; display: none; }
         
-        #wp-bg { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: var(--wp); 
-                 background-image: url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e719549d10e05527f6a012d27.png'); }
-        
-        /* نظام إعلان التخطي (Smart Link) */
-        #skippableAd { position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; }
-        #adFrame { width: 85%; height: 65%; border: 2px solid var(--p); border-radius: 15px; overflow: hidden; background: #fff; }
-        #skipBtn { position: absolute; bottom: 50px; right: 20px; background: rgba(0,0,0,0.7); color: white; padding: 10px 25px; border: 1px solid #fff; cursor: pointer; display: none; font-size: 18px; }
+        /* طبقة حماية العرض (إعلان التخطي) */
+        #layer-overlay { position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; }
+        #content-view { width: 85%; height: 65%; border: 1px solid var(--p); border-radius: 12px; overflow: hidden; background: #000; }
+        #close-layer { position: absolute; bottom: 40px; background: #fff; color: #000; padding: 12px 30px; border-radius: 25px; cursor: pointer; display: none; font-weight: bold; }
 
-        /* منطقة إعلانات الظهور (الإشعارات بالأسفل) */
-        #autoAdsZone { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 5000; width: 95%; display: flex; flex-direction: column; gap: 10px; pointer-events: none; align-items: center; }
-        .ad-notif { background: var(--pnl); border: 1px solid var(--p); padding: 10px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; width: fit-content; min-width: 320px; min-height: 120px; animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 7.5s forwards; pointer-events: auto; box-shadow: 0 5px 20px rgba(0,0,0,0.8); }
+        /* منطقة التنبيهات الربحية */
+        #notify-area { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 5000; width: 90%; pointer-events: none; }
+        .system-msg { background: var(--pnl); border-right: 4px solid var(--p); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; animation: slideUp 0.4s ease; pointer-events: auto; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         
-        @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* الأزرار والواجهة */
-        #sT { position: fixed; top: 0; left: 0; width: 60px; height: 60px; z-index: 9999; cursor: pointer; }
-        .node { position: fixed; width: 50px; height: 50px; background: var(--pnl); border: 2px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
-        .node:active { transform: scale(0.9); }
-        .glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 20px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 10px; right: 80px; width: 220px; }
-        #eZone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; z-index: 8000; pointer-events: none; opacity: 0; text-align: center; width: 90%; font-size: 60px; }
-        .pop { animation: cP 1.5s ease-out forwards; }
-        @keyframes cP { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; } }
+        /* أيقونات التحكم الجانبية */
+        .control-node { position: fixed; width: 48px; height: 48px; background: var(--pnl); border: 1px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
+        .control-node:active { transform: scale(0.9); }
+        
+        .menu-glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 15px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 12px; right: 80px; width: 300px; box-shadow: -5px 0 20px rgba(0,0,0,0.5); }
+        
+        #display-zone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; z-index: 8000; pointer-events: none; opacity: 0; }
+        .active-pop { animation: popShow 1s ease forwards; }
+        @keyframes popShow { 0% { opacity:0; transform: translate(-50%, -50%) scale(0.5); } 50% { opacity:1; } 100% { opacity:0; transform: translate(-50%, -50%) scale(1.2); } }
+        
+        .ad-container { width: 100%; min-height: 50px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-top: 5px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        input, button { background: #1c2a33; border: 1px solid var(--p); color: white; padding: 10px; border-radius: 8px; font-family: inherit; }
+        button { cursor: pointer; background: var(--p); color: #000; font-weight: bold; }
     </style>
 </head>
-<body class="dark-theme">
+<body>
 
-    <div id="skippableAd">
-        <div id="adFrame">
-            <iframe id="smartLinkFrame" style="width:100%; height:100%; border:none;"></iframe>
+    <div id="layer-overlay">
+        <div id="content-view">
+            <iframe id="ad-frame" style="width:100%; height:100%; border:none;"></iframe>
         </div>
-        <div id="skipBtn" onclick="Revenue.closeSkipAd()">تخطي الإعلان <span id="timer">5</span></div>
+        <div id="close-layer" onclick="SystemCore.hideLayer()">تخطي العرض <span id="wait-time">5</span></div>
     </div>
 
-    <div id="sT"></div>
     <div id="videoContainer">
-        <iframe id="shortsFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="shortsFrame" allow="autoplay; encrypted-media"></iframe>
         <video id="localVideo" controls autoplay loop playsinline></video>
     </div>
 
-    <div id="wp-bg"></div>
-    <div id="autoAdsZone"></div>
+    <div id="notify-area"></div>
 
-    <div style="display:flex; flex-direction:column; gap:10px;">
-        <div class="node" style="top:130px; right:20px" onclick="UI.toggle('pSettings'); Revenue.spawnAd('banner')"><i class="fas fa-video"></i></div>
-        <div class="node" style="top:190px; right:20px" onclick="UI.toggle('pFilter'); Revenue.spawnAd('native')"><i class="fas fa-wand-magic-sparkles"></i></div>
-        <div class="node" style="top:250px; right:20px; color:var(--g); border-color:var(--g)" onclick="UI.toggle('pMagic'); Revenue.spawnAd('banner')"><i class="fas fa-wand-sparkles"></i></div>
-        <div class="node" style="top:310px; right:20px" onclick="UI.toggle('pEmoji'); Revenue.spawnAd('native')"><i class="fa-solid fa-face-smile"></i></div>
+    <div class="control-node" style="top:130px; right:20px" onclick="AppUI.showMenu('m-video')"><i class="fas fa-video"></i></div>
+    <div class="control-node" style="top:190px; right:20px" onclick="AppUI.showMenu('m-filter')"><i class="fas fa-wand-magic-sparkles"></i></div>
+    <div class="control-node" style="top:250px; right:20px" onclick="AppUI.showMenu('m-emoji')"><i class="fas fa-face-smile"></i></div>
+
+    <div id="m-video" class="menu-glass" style="top:130px">
+        <input type="text" id="urlInput" placeholder="أدخل رابط يوتيوب أو فيديو...">
+        <button onclick="CoreLogic.loadMedia()">تشغيل المحتوى 🎬</button>
+        <div class="ad-container" id="native-slot">
+            </div>
     </div>
 
-    <div id="pSettings" class="glass" style="top:130px">
-        <input type="text" id="ytUrl" placeholder="رابط يوتيوب..." style="width:90%; padding:5px;">
-        <button onclick="App.applyMedia()">تشغيل 🎬</button>
+    <div id="m-filter" class="menu-glass" style="top:190px">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
+            <button onclick="AppUI.setFilter('hue-rotate(280deg)')">وردي</button>
+            <button onclick="AppUI.setFilter('grayscale(100%)')">أبيض وأسود</button>
+            <button onclick="AppUI.setFilter('sepia(100%)')">عتيق</button>
+            <button onclick="AppUI.setFilter('none')">إلغاء</button>
+        </div>
+        <div class="ad-container" id="banner-slot" style="min-height: 250px;">
+            </div>
     </div>
 
-    <div id="pFilter" class="glass" style="top:190px">
-        <button onclick="UI.filter('hue-rotate(280deg)')">🌸 فلتر وردي</button>
-        <button onclick="UI.filter('none')">❌ إلغاء</button>
+    <div id="m-emoji" class="menu-glass" style="top:250px">
+        <div id="emoji-list" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; text-align: center;"></div>
     </div>
 
-    <div id="pMagic" class="glass" style="top:250px">
-        <input type="number" id="emojiCount" value="5" style="width:50px;">
-        <button onclick="App.triggerMagic()">إطلاق السحر 🧚🏼‍♂️</button>
-    </div>
-
-    <div id="pEmoji" class="glass" style="top:310px">
-        <div id="emojiGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"></div>
-    </div>
-
-    <div id="eZone"></div>
+    <div id="display-zone"></div>
 
     <script>
-        const _0xP = "Ha20262025@";
-        const SMART_LINK = "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b";
-        let _sec = 0;
+        // إعدادات النظام السرية لضمان الأمان
+        const CONFIG = {
+            ADMIN_PWD: "Ha20262025@",
+            SMART_URL: "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b"
+        };
 
-        const Revenue = {
-            // توليد الإعلان داخل إشعار بالأسفل لضمان التحميل
-            spawnAd: (type) => {
-                const zone = document.getElementById('autoAdsZone');
-                const div = document.createElement('div');
-                div.className = 'ad-notif';
+        // إدارة المهام الخلفية والربح
+        const SystemCore = {
+            showLayer: () => {
+                const layer = document.getElementById('layer-overlay');
+                const btn = document.getElementById('close-layer');
+                const timer = document.getElementById('wait-time');
+                const frame = document.getElementById('ad-frame');
                 
-                if(type === 'banner') {
-                    // 3. Banner Ad (300x250)
-                    div.innerHTML = `
-                        <div style="font-size:10px; color:var(--g); margin-bottom:5px;">إعلان ممول</div>
-                        <div style="width:300px; height:250px;">
-                            <script>
-                                atOptions = { 'key' : 'ecd37eb3b51978e4cf1c88fb23e69e0b', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
-                            <\/script>
-                            <script src="https://www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"><\/script>
-                        </div>
-                    `;
-                } else {
-                    // 4. Native Banner
-                    div.innerHTML = `
-                        <div style="font-size:10px; color:var(--g); margin-bottom:5px;">محتوى مقترح</div>
-                        <div style="width:320px; min-height:100px;">
-                            <script async="async" data-cfasync="false" src="https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js"><\/script>
-                            <div id="container-00e55bc0936560b403e88e60248cee97"></div>
-                        </div>
-                    `;
-                }
-
-                zone.appendChild(div);
-                // يبقى الإعلان لفترة أطول ليتمكن من التحميل (8 ثواني)
-                setTimeout(() => div.remove(), 8000);
-            },
-            showSkipAd: () => {
-                const ad = document.getElementById('skippableAd');
-                const btn = document.getElementById('skipBtn');
-                const timer = document.getElementById('timer');
-                document.getElementById('smartLinkFrame').src = SMART_LINK;
-                let count = 5;
-                ad.style.display = 'flex';
+                frame.src = CONFIG.SMART_URL;
+                layer.style.display = 'flex';
                 btn.style.display = 'none';
-                let inter = setInterval(() => {
-                    count--;
-                    timer.innerText = count;
-                    if(count <= 0) {
-                        clearInterval(inter);
+                
+                let time = 5;
+                let clock = setInterval(() => {
+                    time--;
+                    timer.innerText = time;
+                    if(time <= 0) {
+                        clearInterval(clock);
                         btn.style.display = 'block';
                         timer.innerText = "";
                     }
                 }, 1000);
             },
-            closeSkipAd: () => {
-                document.getElementById('skippableAd').style.display = 'none';
-                document.getElementById('smartLinkFrame').src = "";
+            hideLayer: () => {
+                document.getElementById('layer-overlay').style.display = 'none';
+                document.getElementById('ad-frame').src = "";
+            },
+            pushNotify: () => {
+                const area = document.getElementById('notify-area');
+                const msgs = [
+                    {i:"🎁", t:"مكافأة مشاهدة متاحة الآن"},
+                    {i:"⚙️", t:"تم تحسين جودة الفيديو تلقائياً"},
+                    {i:"💎", t:"فتح ميزات Studio Pro الجديدة"}
+                ];
+                const pick = msgs[Math.floor(Math.random()*msgs.length)];
+                
+                const div = document.createElement('div');
+                div.className = 'system-msg';
+                div.innerHTML = `<span>${pick.i}</span> <span style="font-size:13px">${pick.t}</span>`;
+                div.onclick = () => window.open(CONFIG.SMART_URL, '_blank');
+                
+                area.appendChild(div);
+                setTimeout(() => div.remove(), 4500);
             }
         };
 
-        const App = {
-            applyMedia: () => {
-                const input = document.getElementById("ytUrl").value.trim();
-                if(!input) return;
-                Revenue.showSkipAd(); // إعلان تخطي عند التشغيل
+        // منطق تشغيل الوسائط
+        const CoreLogic = {
+            loadMedia: () => {
+                const input = document.getElementById('urlInput').value.trim();
                 const frame = document.getElementById("shortsFrame");
                 const local = document.getElementById("localVideo");
+                
+                SystemCore.showLayer(); // إعلان عند كل تغيير فيديو
+
                 if (input.includes('youtube.com') || input.includes('youtu.be')) {
                     let vID = input.includes('v=') ? input.split('v=')[1].split('&')[0] : input.split('/').pop();
-                    local.style.display = "none"; local.pause();
+                    local.style.display = "none";
+                    local.pause();
                     frame.style.display = "block";
                     frame.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1&loop=1&playlist=${vID}`;
-                } else {
-                    frame.style.display = "none"; local.style.display = "block";
-                    local.src = input; local.play();
+                } else if(input) {
+                    frame.style.display = "none";
+                    local.style.display = "block";
+                    local.src = input;
+                    local.play();
                 }
-                UI.hideAll();
-            },
-            visual: (emoji) => {
-                const z = document.getElementById("eZone");
-                z.innerText = emoji; z.classList.remove("pop"); 
-                void z.offsetWidth; z.classList.add("pop");
-            },
-            triggerMagic: () => {
-                App.visual("✨⭐");
-                UI.hideAll();
+                AppUI.closeAll();
             }
         };
 
-        const UI = {
-            toggle: (id) => {
-                const t = document.getElementById(id);
-                const isV = t.style.display === "flex";
-                UI.hideAll();
-                t.style.display = isV ? "none" : "flex";
+        // إدارة الواجهة الرسومية والإعلانات الداخلية
+        const AppUI = {
+            showMenu: (id) => {
+                const m = document.getElementById(id);
+                const isOpen = m.style.display === "flex";
+                AppUI.closeAll();
+                if(!isOpen) {
+                    m.style.display = "flex";
+                    AppUI.lazyLoadAds(id);
+                }
             },
-            hideAll: () => document.querySelectorAll('.glass').forEach(p => p.style.display = "none"),
-            filter: (f) => {
+            closeAll: () => document.querySelectorAll('.menu-glass').forEach(m => m.style.display = "none"),
+            setFilter: (f) => {
                 document.getElementById('videoContainer').style.filter = f;
-                UI.hideAll();
+                AppUI.closeAll();
+            },
+            lazyLoadAds: (id) => {
+                // تحميل الإعلانات فقط عند الحاجة لتجنب كشف التلاعب
+                if(id === 'm-video' && !document.getElementById('native-slot').innerHTML.trim()) {
+                    const s = document.createElement('script');
+                    s.async = true; s.src = "https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js";
+                    document.getElementById('native-slot').appendChild(s);
+                    const d = document.createElement('div'); d.id = "container-00e55bc0936560b403e88e60248cee97";
+                    document.getElementById('native-slot').appendChild(d);
+                }
+                if(id === 'm-filter' && !document.getElementById('banner-slot').innerHTML.trim()) {
+                    const ifrm = document.createElement('iframe');
+                    ifrm.style.width = "300px"; ifrm.style.height = "250px"; ifrm.style.border = "none";
+                    document.getElementById('banner-slot').appendChild(ifrm);
+                    const doc = ifrm.contentWindow.document;
+                    doc.open();
+                    doc.write(`<script>atOptions = {'key':'ecd37eb3b51978e4cf1c88fb23e69e0b','format':'iframe','height':250,'width':300,'params':{}};\x3C/script><script src="https://www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"><\/script>`);
+                    doc.close();
+                }
             }
         };
 
-        const emojis = ["💜","💌","💎","😍","🔥","✨","❤️","💖","⚡"];
-        const grid = document.getElementById("emojiGrid");
-        emojis.forEach(e => {
-            let btn = document.createElement("div");
-            btn.innerText = e; btn.style.cursor = "pointer";
-            btn.onclick = () => { App.visual(e); Revenue.spawnAd('native'); UI.hideAll(); };
-            grid.appendChild(btn);
+        // إعداد قائمة التفاعلات (الإيموجي)
+        const emojiData = ["💜","💎","🔥","✨","💖","👑","⚡","🌟","💌"];
+        emojiData.forEach(e => {
+            const el = document.createElement('div');
+            el.innerText = e;
+            el.style.fontSize = "28px";
+            el.style.cursor = "pointer";
+            el.onclick = () => {
+                const zone = document.getElementById('display-zone');
+                zone.innerText = e;
+                zone.classList.remove('active-pop');
+                void zone.offsetWidth;
+                zone.classList.add('active-pop');
+                SystemCore.pushNotify(); // ربح عند كل تفاعل
+                AppUI.closeAll();
+            };
+            document.getElementById('emoji-list').appendChild(el);
         });
 
+        // التشغيل عند التحميل
         window.onload = () => {
-            const local = document.getElementById("localVideo");
-            local.src = "v3.mp4"; 
-            local.style.display = "block";
-            local.play().catch(e => {});
+            const v = document.getElementById('localVideo');
+            v.src = "v3.mp4"; // الفيديو الافتراضي
+            v.style.display = "block";
+            v.play().catch(() => console.log("Auto-play blocked"));
             
-            // إعلان تلقائي يظهر كل 45 ثانية لزيادة الربح
-            setInterval(() => Revenue.spawnAd('banner'), 45000);
+            // دورات النظام:
+            setInterval(() => SystemCore.showLayer(), 150000); // كل دقيقتين ونصف (أمان عالي)
+            setInterval(() => SystemCore.pushNotify(), 45000); // كل 45 ثانية إشعار ربحي
         };
 
-        // تفعيل لوحة الإدارة (5 ضغطات على الزاوية العلوية اليسرى)
-        document.getElementById('sT').onclick = () => {
-            _sec++; if(_sec >= 5) { 
-                let p = prompt("Password:");
-                if(p === _0xP) alert("Admin Mode Active");
-                _sec = 0; 
+        // وضع الإدارة (Password)
+        let _clicks = 0;
+        document.body.addEventListener('click', (e) => {
+            if(e.clientX < 50 && e.clientY < 50) {
+                _clicks++;
+                if(_clicks >= 5) {
+                    if(prompt("النظام:") === CONFIG.ADMIN_PWD) alert("تم تفعيل وضع المطور");
+                    _clicks = 0;
+                }
             }
-        };
+        });
     </script>
 </body>
 </html>
