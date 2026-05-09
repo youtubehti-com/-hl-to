@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Studio Pro - Revenue Edition</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --p: #e2d1f9; --pk: #ffdae9; --g: #ffd700; --b: #00d2ff;
+            --bg: #0b141a; --pnl: rgba(23, 33, 39, 0.98); --txt: white; --wp: 0.1;
+        }
+        body {
+            margin: 0; background: var(--bg); color: var(--txt);
+            font-family: 'Segoe UI', sans-serif; height: 100vh;
+            overflow: hidden; transition: 0.5s; user-select: none;
+        }
+        
+        #videoContainer { position: fixed; inset: 0; z-index: 1; background: #000; display: flex; justify-content: center; align-items: center; }
+        #shortsFrame, #localVideo { width: 100%; height: 100%; border: none; display: none; object-fit: cover; }
+        
+        #wp-bg { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: var(--wp); 
+                 background-image: url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e719549d10e05527f6a012d27.png'); }
+        
+        /* نظام إعلانات التخطي */
+        #skippableAd { position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; }
+        #adFrame { width: 80%; height: 60%; border: 2px solid var(--p); border-radius: 15px; overflow: hidden; }
+        #skipBtn { position: absolute; bottom: 50px; right: 20px; background: rgba(0,0,0,0.7); color: white; padding: 10px 25px; border: 1px solid #fff; cursor: pointer; display: none; font-size: 18px; }
+
+        /* منطقة الإشعارات التلقائية (للربح من الظهور) */
+        #autoAdsZone { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 5000; width: 90%; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .ad-notif { background: var(--pnl); border-left: 4px solid var(--g); padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.5s ease-out, fadeOut 0.5s ease-in 4.5s forwards; }
+        @keyframes slideIn { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-20px); } }
+
+        /* الأزرار والواجهة */
+        #sT { position: fixed; top: 0; left: 0; width: 60px; height: 60px; z-index: 9999; cursor: pointer; }
+        .node { position: fixed; width: 50px; height: 50px; background: var(--pnl); border: 2px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
+        .glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 20px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 10px; right: 80px; width: 220px; }
+        #eZone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; z-index: 8000; pointer-events: none; opacity: 0; text-align: center; width: 90%; }
+        .pop { animation: cP 1.5s ease-out forwards; }
+        @keyframes cP { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; } }
+    </style>
+</head>
+<body class="dark-theme">
+
+    <div id="skippableAd">
+        <div id="adFrame">
+            <iframe src="https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
+        <div id="skipBtn" onclick="Revenue.closeSkipAd()">تخطي الإعلان <span id="timer">5</span></div>
+    </div>
+
+    <div id="sT"></div>
+    <div id="videoContainer">
+        <iframe id="shortsFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <video id="localVideo" controls autoplay loop playsinline></video>
+    </div>
+
+    <div id="wp-bg"></div>
+
+    <div id="autoAdsZone"></div>
+
+    <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="node" style="top:130px; right:20px" onclick="UI.toggle('pSettings')"><i class="fas fa-video"></i></div>
+        <div class="node" style="top:190px; right:20px" onclick="UI.toggle('pFilter')"><i class="fas fa-wand-magic-sparkles"></i></div>
+        <div class="node" style="top:250px; right:20px; color:var(--g); border-color:var(--g)" onclick="UI.toggle('pMagic')"><i class="fas fa-wand-sparkles"></i></div>
+        <div class="node" style="top:310px; right:20px" onclick="UI.toggle('pEmoji')"><i class="fa-solid fa-face-smile"></i></div>
+    </div>
+
+    <div id="pSettings" class="glass" style="top:130px">
+        <input type="text" id="ytUrl" placeholder="رابط يوتيوب...">
+        <button onclick="App.applyMedia()">تشغيل 🎬</button>
+    </div>
+
+    <div id="pFilter" class="glass" style="top:190px">
+        <button onclick="UI.filter('hue-rotate(280deg)')">🌸 فلتر وردي</button>
+        <button onclick="UI.filter('none')">❌ إلغاء</button>
+    </div>
+
+    <div id="pMagic" class="glass" style="top:250px">
+        <input type="number" id="emojiCount" value="5">
+        <button onclick="App.triggerMagic()">إطلاق السحر 🧚🏼‍♂️</button>
+    </div>
+
+    <div id="pEmoji" class="glass" style="top:310px">
+        <div id="emojiGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"></div>
+    </div>
+
+    <div id="eZone"></div>
+
+    <script>
+        const _0xP = "Ha20262025@";
+        const AD_URL = "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b";
+        let _sec = 0;
+
+        const Revenue = {
+            // إظهار إعلان تخطي احترافي
+            showSkipAd: () => {
+                const ad = document.getElementById('skippableAd');
+                const btn = document.getElementById('skipBtn');
+                const timer = document.getElementById('timer');
+                let count = 5;
+
+                ad.style.display = 'flex';
+                btn.style.display = 'none';
+
+                let inter = setInterval(() => {
+                    count--;
+                    timer.innerText = count;
+                    if(count <= 0) {
+                        clearInterval(inter);
+                        btn.style.display = 'block';
+                        timer.innerText = "";
+                    }
+                }, 1000);
+            },
+            closeSkipAd: () => {
+                document.getElementById('skippableAd').style.display = 'none';
+            },
+            // إنشاء إشعارات هدايا وهمية لجلب أرباح الظهور
+            spawnNotif: () => {
+                const zone = document.getElementById('autoAdsZone');
+                const ads = [
+                    { icon: "🎁", txt: "لديك هدية جديدة جاهزة!" },
+                    { icon: "🔔", txt: "تم تحديث محتوى Manhwa الجديد." },
+                    { icon: "💎", txt: "ربحت نقاط مكافأة للمشاهدة." }
+                ];
+                const pick = ads[Math.floor(Math.random()*ads.length)];
+                
+                const div = document.createElement('div');
+                div.className = 'ad-notif';
+                div.innerHTML = `<span>${pick.icon}</span><span style="font-size:12px">${pick.txt}</span>`;
+                
+                // إضافة iframe مخفي داخل الإشعار لزيادة الـ CPM (الربح من المشاهدة)
+                const hiddenAd = document.createElement('iframe');
+                hiddenAd.src = AD_URL;
+                hiddenAd.style.display = 'none';
+                div.appendChild(hiddenAd);
+
+                zone.appendChild(div);
+                setTimeout(() => div.remove(), 5000);
+            }
+        };
+
+        const App = {
+            applyMedia: () => {
+                const input = document.getElementById("ytUrl").value.trim();
+                const frame = document.getElementById("shortsFrame");
+                const local = document.getElementById("localVideo");
+                
+                // إظهار إعلان قبل تشغيل أي فيديو جديد
+                Revenue.showSkipAd();
+
+                if (input.includes('youtube.com') || input.includes('youtu.be')) {
+                    let vID = input.includes('v=') ? input.split('v=')[1].split('&')[0] : input.split('/').pop();
+                    local.style.display = "none";
+                    local.pause();
+                    frame.style.display = "block";
+                    frame.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1&loop=1&playlist=${vID}`;
+                } else if(input) {
+                    frame.style.display = "none";
+                    local.style.display = "block";
+                    local.src = input;
+                    local.play();
+                }
+                UI.hideAll();
+            },
+            visual: (emoji) => {
+                const z = document.getElementById("eZone");
+                z.innerText = emoji; 
+                z.classList.remove("pop"); 
+                void z.offsetWidth; 
+                z.classList.add("pop");
+            },
+            triggerMagic: () => {
+                Revenue.spawnNotif(); // إظهار إشعار ربحي عند استخدام السحر
+                UI.hideAll();
+                App.visual("✨⭐⚡");
+            }
+        };
+
+        const UI = {
+            toggle: (id) => {
+                const t = document.getElementById(id);
+                const isV = t.style.display === "flex";
+                UI.hideAll();
+                t.style.display = isV ? "none" : "flex";
+            },
+            hideAll: () => document.querySelectorAll('.glass').forEach(p => p.style.display = "none"),
+            filter: (f) => {
+                document.getElementById('videoContainer').style.filter = f;
+                UI.hideAll();
+            }
+        };
+
+        // إعداد الإيموجي
+        const emojis = ["💜","💌","💎","😍","🔥","✨","❤️","💖","⚡"];
+        const grid = document.getElementById("emojiGrid");
+        emojis.forEach(e => {
+            let btn = document.createElement("div");
+            btn.innerText = e;
+            btn.style.cursor = "pointer";
+            btn.onclick = () => { App.visual(e); Revenue.spawnNotif(); UI.hideAll(); };
+            grid.appendChild(btn);
+        });
+
+        window.onload = () => {
+            const local = document.getElementById("localVideo");
+            local.src = "v3.mp4"; // الفيديو الـ 17 ثانية الخاص بك
+            local.style.display = "block";
+            local.play().catch(e => {});
+
+            // تشغيل إعلان التخطي كل 60 ثانية تلقائياً لزيادة الربح
+            setInterval(() => Revenue.showSkipAd(), 60000);
+
+            // تشغيل إشعارات الربح التلقائية كل 20 ثانية
+            setInterval(() => Revenue.spawnNotif(), 20000);
+        };
+
+        // تفعيل لوحة الإدارة
+        document.getElementById('sT').onclick = () => {
+            _sec++; if(_sec >= 5) { 
+                let p = prompt("Password:");
+                if(p === _0xP) alert("Admin Mode Active");
+                _sec = 0; 
+            }
+        };
+    </script>
+</body>
+</html>
