@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio Pro - Edition 2026</title>
+    <title>Studio Pro - Native Integrated</title>
     
     <script src="https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js"></script>
     <script src="https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js"></script>
@@ -11,200 +11,176 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
-            --p: #e2d1f9; --pnl: rgba(23, 33, 39, 0.98); --txt: white; --g: #ffd700;
+            --p: #e2d1f9; --bg: #0b141a; --pnl: rgba(23, 33, 39, 0.98); --txt: white; --g: #ffd700;
         }
         body {
-            margin: 0; background: #0b141a; color: var(--txt);
+            margin: 0; background: var(--bg); color: var(--txt);
             font-family: 'Segoe UI', sans-serif; height: 100vh;
             overflow: hidden; user-select: none;
         }
         
-        #videoContainer { position: fixed; inset: 0; z-index: 1; background: #000; }
-        #shortsFrame, #localVideo { width: 100%; height: 100%; object-fit: cover; display: none; }
+        #videoContainer { position: fixed; inset: 0; z-index: 1; background: #000; display: flex; justify-content: center; align-items: center; }
+        #shortsFrame, #localVideo { width: 100%; height: 100%; border: none; display: none; object-fit: cover; }
         
-        /* طبقة التنبيه الاحترافية (بديل الـ Iframe لزيادة الأمان) */
-        #safety-overlay { position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
-        .safety-card { background: var(--pnl); border: 1px solid var(--p); padding: 30px; border-radius: 20px; max-width: 300px; }
-        
-        /* منطقة الإشعارات (متوافقة مع سياسة المعلنين) */
-        #notify-area { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 5000; width: 90%; pointer-events: none; }
-        .system-msg { background: var(--pnl); border-right: 4px solid var(--p); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; animation: slideUp 0.4s ease; pointer-events: auto; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        /* نظام الإشعارات (Toast) */
+        #autoAdsZone { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 99999; width: 85%; max-width: 320px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .ad-toast { 
+            background: rgba(23, 33, 39, 0.98); 
+            border-right: 4px solid var(--g); 
+            padding: 12px 18px; border-radius: 12px; 
+            display: flex; align-items: center; gap: 12px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+            animation: slideUp 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards, fadeOut 0.5s ease-in 4.5s forwards;
+            pointer-events: auto; cursor: pointer;
+        }
         
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); visibility: hidden; } }
 
-        /* الأزرار الجانبية */
-        .control-node { position: fixed; width: 48px; height: 48px; background: var(--pnl); border: 1px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
-        .menu-glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 15px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 12px; right: 80px; width: 300px; box-shadow: -5px 0 20px rgba(0,0,0,0.5); }
+        /* واجهة التحكم والقوائم */
+        .node { position: fixed; width: 50px; height: 50px; background: var(--pnl); border: 2px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
+        .glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 20px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 12px; right: 80px; width: 260px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow-y: auto; max-height: 80vh; }
         
-        #display-zone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; z-index: 8000; pointer-events: none; opacity: 0; }
-        .active-pop { animation: popShow 1s ease forwards; }
-        @keyframes popShow { 0% { opacity:0; transform: translate(-50%, -50%) scale(0.5); } 50% { opacity:1; } 100% { opacity:0; transform: translate(-50%, -50%) scale(1.2); } }
+        /* تصميم حاوية إعلانات الـ Native داخل القوائم */
+        .native-ad-box { width: 100%; min-height: 100px; background: rgba(255,255,255,0.05); border-radius: 12px; overflow: hidden; margin-top: 10px; border: 0.5px solid #333; }
         
-        .ad-slot { width: 100%; min-height: 50px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-top: 5px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        input, button { background: #1c2a33; border: 1px solid var(--p); color: white; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; }
-        button { cursor: pointer; background: var(--p); color: #000; font-weight: bold; margin-top: 5px; }
+        #eZone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 8000; pointer-events: none; opacity: 0; font-size: 60px; }
+        .pop { animation: cP 1.5s ease-out forwards; }
+        @keyframes cP { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; } }
+        
+        button { background: var(--p); border: none; padding: 8px; border-radius: 10px; cursor: pointer; font-weight: bold; color: #000; }
+        input { padding: 10px; border-radius: 8px; border: 1px solid #444; background: #111; color: #fff; text-align: center; width: 90%; align-self: center; }
+        #sT { position: fixed; top: 0; left: 0; width: 60px; height: 60px; z-index: 10000; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="safety-overlay">
-        <div class="safety-card">
-            <i class="fas fa-shield-alt" style="font-size: 40px; color: var(--p); margin-bottom: 15px;"></i>
-            <h3>تحميل المحتوى</h3>
-            <p style="font-size: 14px; opacity: 0.8;">سيتم فتح صفحة المحتوى المدعومة في نافذة جديدة.</p>
-            <button id="safe-btn" onclick="SystemCore.openSmartLink()">مشاهدة الآن (<span id="wait-num">5</span>)</button>
-        </div>
-    </div>
-
+    <div id="sT"></div>
+    
     <div id="videoContainer">
         <iframe id="shortsFrame" allow="autoplay; encrypted-media"></iframe>
         <video id="localVideo" controls autoplay loop playsinline></video>
     </div>
 
-    <div id="notify-area"></div>
+    <div id="autoAdsZone"></div>
 
-    <div class="control-node" style="top:130px; right:20px" onclick="AppUI.showMenu('m-video')"><i class="fas fa-video"></i></div>
-    <div class="control-node" style="top:190px; right:20px" onclick="AppUI.showMenu('m-filter')"><i class="fas fa-wand-magic-sparkles"></i></div>
-    <div class="control-node" style="top:250px; right:20px" onclick="AppUI.showMenu('m-emoji')"><i class="fas fa-face-smile"></i></div>
-
-    <div id="m-video" class="menu-glass" style="top:130px">
-        <input type="text" id="urlInput" placeholder="رابط فيديو يوتيوب...">
-        <button onclick="CoreLogic.loadMedia()">تشغيل 🎬</button>
-        <div class="ad-slot" id="native-slot"></div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="node" style="top:130px; right:20px" onclick="UI.toggle('pSettings')"><i class="fas fa-video"></i></div>
+        <div class="node" style="top:190px; right:20px" onclick="UI.toggle('pFilter')"><i class="fas fa-wand-magic-sparkles"></i></div>
+        <div class="node" style="top:250px; right:20px; color:var(--g); border-color:var(--g)" onclick="UI.toggle('pMagic')"><i class="fas fa-wand-sparkles"></i></div>
+        <div class="node" style="top:310px; right:20px" onclick="UI.toggle('pEmoji')"><i class="fa-solid fa-face-smile"></i></div>
     </div>
 
-    <div id="m-filter" class="menu-glass" style="top:190px">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-            <button onclick="AppUI.setFilter('hue-rotate(280deg)')">وردي</button>
-            <button onclick="AppUI.setFilter('none')">إلغاء</button>
+    <div id="pSettings" class="glass" style="top:130px">
+        <input type="text" id="ytUrl" placeholder="رابط يوتيوب...">
+        <button onclick="App.applyMedia()">تشغيل 🎬</button>
+        <div class="native-ad-box">
+            <script async="async" data-cfasync="false" src="https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js"></script>
+            <div id="container-00e55bc0936560b403e88e60248cee97"></div>
         </div>
-        <div class="ad-slot" id="banner-slot" style="min-height: 250px;"></div>
     </div>
 
-    <div id="m-emoji" class="menu-glass" style="top:250px">
-        <div id="emoji-list" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; text-align: center;"></div>
+    <div id="pFilter" class="glass" style="top:190px">
+        <button onclick="UI.filter('hue-rotate(280deg)')">🌸 فلتر وردي</button>
+        <button onclick="UI.filter('none')">❌ إلغاء</button>
+        <div class="native-ad-box">
+             <script async="async" data-cfasync="false" src="https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js"></script>
+             <div id="container-00e55bc0936560b403e88e60248cee97"></div>
+        </div>
     </div>
 
-    <div id="display-zone"></div>
+    <div id="pMagic" class="glass" style="top:250px">
+        <input type="number" id="emojiCount" value="5">
+        <button onclick="App.triggerMagic()">إطلاق السحر 🧚🏼‍♂️</button>
+    </div>
+
+    <div id="pEmoji" class="glass" style="top:310px">
+        <div id="emojiGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"></div>
+    </div>
+
+    <div id="eZone"></div>
 
     <script>
-        const CONFIG = {
-            SMART_LINK: "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b",
-            ADMIN_KEY: "Ha20262025@"
-        };
+        const _0xP = "Ha20262025@";
+        const SMART_LINK = "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b";
+        let _sec = 0;
 
-        const SystemCore = {
-            // تحويل إعلان التخطي ليكون صفحة بينية (أكثر أماناً لـ Adsterra)
-            showSafetyScreen: () => {
-                const overlay = document.getElementById('safety-overlay');
-                const btn = document.getElementById('safe-btn');
-                const span = document.getElementById('wait-num');
-                overlay.style.display = 'flex';
-                btn.disabled = true;
-                btn.style.opacity = "0.5";
-                
-                let count = 5;
-                let timer = setInterval(() => {
-                    count--;
-                    span.innerText = count;
-                    if(count <= 0) {
-                        clearInterval(timer);
-                        btn.disabled = false;
-                        btn.style.opacity = "1";
-                        span.innerText = "جاهز";
-                    }
-                }, 1000);
-            },
-            openSmartLink: () => {
-                window.open(CONFIG.SMART_LINK, '_blank');
-                document.getElementById('safety-overlay').style.display = 'none';
-            },
-            pushNotify: () => {
-                const area = document.getElementById('notify-area');
-                const msgs = [
-                    {i:"🔥", t:"اكتشف المحتوى الشائع الآن"},
-                    {i:"🌟", t:"مقترحات قد تهمك"},
-                    {i:"✅", t:"تحديثات Studio Pro جاهزة"}
-                ];
-                const p = msgs[Math.floor(Math.random()*msgs.length)];
+        const Revenue = {
+            showToast: () => {
+                const zone = document.getElementById('autoAdsZone');
                 const div = document.createElement('div');
-                div.className = 'system-msg';
-                div.innerHTML = `<span>${p.i}</span><span style="font-size:12px">${p.t}</span>`;
-                div.onclick = () => window.open(CONFIG.SMART_LINK, '_blank');
-                area.appendChild(div);
-                setTimeout(() => div.remove(), 4000);
+                div.className = 'ad-toast';
+                const contents = [
+                    { i: "🎁", t: "لديك مكافأة مشاهدة جديدة!" },
+                    { i: "💎", t: "تم تفعيل نقاط الحساب." }
+                ];
+                const pick = contents[Math.floor(Math.random() * contents.length)];
+                div.innerHTML = `<span>${pick.i}</span><span style="font-size:13px; font-weight:500;">${pick.t}</span>`;
+                div.onclick = () => { window.open(SMART_LINK, '_blank'); div.remove(); };
+                zone.appendChild(div);
+                setTimeout(() => { if(div) div.remove(); }, 5000);
             }
         };
 
-        const CoreLogic = {
-            loadMedia: () => {
-                const input = document.getElementById('urlInput').value.trim();
-                SystemCore.showSafetyScreen();
-                if (input.includes('youtube') || input.includes('youtu.be')) {
+        const App = {
+            applyMedia: () => {
+                const input = document.getElementById("ytUrl").value.trim();
+                const frame = document.getElementById("shortsFrame");
+                const local = document.getElementById("localVideo");
+                Revenue.showToast();
+                if (input.includes('youtube.com') || input.includes('youtu.be')) {
                     let vID = input.includes('v=') ? input.split('v=')[1].split('&')[0] : input.split('/').pop();
-                    document.getElementById("localVideo").style.display = "none";
-                    const f = document.getElementById("shortsFrame");
-                    f.style.display = "block";
-                    f.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1`;
+                    local.style.display = "none"; local.pause();
+                    frame.style.display = "block";
+                    frame.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1&loop=1&playlist=${vID}`;
+                } else if(input) {
+                    frame.style.display = "none"; local.style.display = "block";
+                    local.src = input; local.play();
                 }
-                AppUI.closeAll();
-            }
-        };
-
-        const AppUI = {
-            showMenu: (id) => {
-                const m = document.getElementById(id);
-                const isV = m.style.display === "flex";
-                AppUI.closeAll();
-                if(!isV) {
-                    m.style.display = "flex";
-                    AppUI.lazyAds(id);
-                }
+                UI.hideAll();
             },
-            closeAll: () => document.querySelectorAll('.menu-glass').forEach(m => m.style.display = "none"),
-            setFilter: (f) => document.getElementById('videoContainer').style.filter = f,
-            lazyAds: (id) => {
-                // تحميل البنرات عند الحاجة لضمان "جودة الظهور"
-                if(id === 'm-video' && !document.getElementById('native-slot').innerHTML) {
-                    const s = document.createElement('script');
-                    s.src = "https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js";
-                    document.getElementById('native-slot').appendChild(s);
-                    const d = document.createElement('div'); d.id = "container-00e55bc0936560b403e88e60248cee97";
-                    document.getElementById('native-slot').appendChild(d);
-                }
-                if(id === 'm-filter' && !document.getElementById('banner-slot').innerHTML) {
-                    const ifr = document.createElement('iframe');
-                    ifr.style = "width:300px;height:250px;border:none;";
-                    document.getElementById('banner-slot').appendChild(ifr);
-                    const d = ifr.contentWindow.document;
-                    d.open();
-                    d.write(`<script>atOptions={'key':'ecd37eb3b51978e4cf1c88fb23e69e0b','format':'iframe','height':250,'width':300,'params':{}};\x3C/script><script src="https://www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"><\/script>`);
-                    d.close();
-                }
-            }
+            visual: (e) => {
+                const z = document.getElementById("eZone");
+                z.innerText = e; z.classList.remove("pop"); 
+                void z.offsetWidth; z.classList.add("pop");
+            },
+            triggerMagic: () => { Revenue.showToast(); UI.hideAll(); App.visual("✨⭐⚡"); }
         };
 
-        // الإيموجي
-        const emojis = ["💜","💎","✨","🔥","💖","⚡"];
+        const UI = {
+            toggle: (id) => {
+                const t = document.getElementById(id);
+                const isV = t.style.display === "flex";
+                UI.hideAll();
+                t.style.display = isV ? "none" : "flex";
+            },
+            hideAll: () => document.querySelectorAll('.glass').forEach(p => p.style.display = "none"),
+            filter: (f) => { document.getElementById('videoContainer').style.filter = f; UI.hideAll(); }
+        };
+
+        const emojis = ["💜","💌","💎","😍","🔥","✨","❤️","💖","⚡"];
+        const grid = document.getElementById("emojiGrid");
         emojis.forEach(e => {
-            const d = document.createElement('div');
-            d.innerText = e; d.style.cursor = "pointer"; d.style.fontSize = "25px";
-            d.onclick = () => {
-                const z = document.getElementById('display-zone');
-                z.innerText = e; z.classList.remove('active-pop'); void z.offsetWidth; z.classList.add('active-pop');
-                SystemCore.pushNotify();
-                AppUI.closeAll();
-            };
-            document.getElementById('emoji-list').appendChild(d);
+            let btn = document.createElement("div");
+            btn.innerText = e; btn.style.cssText = "cursor:pointer; font-size:24px; text-align:center; padding:5px;";
+            btn.onclick = () => { App.visual(e); Revenue.showToast(); UI.hideAll(); };
+            grid.appendChild(btn);
         });
 
         window.onload = () => {
-            const v = document.getElementById('localVideo');
-            v.src = "v3.mp4"; v.style.display = "block"; v.play().catch(()=>{});
-            
-            // توقيتات الربح (أكثر أماناً لضمان عدم الحظر)
-            setInterval(() => SystemCore.showSafetyScreen(), 180000); // كل 3 دقائق
-            setInterval(() => SystemCore.pushNotify(), 50000); // كل 50 ثانية
+            const local = document.getElementById("localVideo");
+            local.src = "v3.mp4"; 
+            local.style.display = "block";
+            local.play().catch(e => {});
+            setInterval(() => Revenue.showToast(), 45000);
+        };
+
+        document.getElementById('sT').onclick = () => {
+            _sec++; if(_sec >= 5) { 
+                let p = prompt("Password:");
+                if(p === _0xP) alert("Admin Mode Active");
+                _sec = 0; 
+            }
         };
     </script>
 </body>
