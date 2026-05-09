@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio Pro - Professional Edition</title>
+    <title>Studio Pro - Edition 2026</title>
     
     <script src="https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js"></script>
     <script src="https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js"></script>
@@ -22,39 +22,38 @@
         #videoContainer { position: fixed; inset: 0; z-index: 1; background: #000; }
         #shortsFrame, #localVideo { width: 100%; height: 100%; object-fit: cover; display: none; }
         
-        /* طبقة حماية العرض (إعلان التخطي) */
-        #layer-overlay { position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; justify-content: center; align-items: center; }
-        #content-view { width: 85%; height: 65%; border: 1px solid var(--p); border-radius: 12px; overflow: hidden; background: #000; }
-        #close-layer { position: absolute; bottom: 40px; background: #fff; color: #000; padding: 12px 30px; border-radius: 25px; cursor: pointer; display: none; font-weight: bold; }
-
-        /* منطقة التنبيهات الربحية */
+        /* طبقة التنبيه الاحترافية (بديل الـ Iframe لزيادة الأمان) */
+        #safety-overlay { position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
+        .safety-card { background: var(--pnl); border: 1px solid var(--p); padding: 30px; border-radius: 20px; max-width: 300px; }
+        
+        /* منطقة الإشعارات (متوافقة مع سياسة المعلنين) */
         #notify-area { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 5000; width: 90%; pointer-events: none; }
         .system-msg { background: var(--pnl); border-right: 4px solid var(--p); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; animation: slideUp 0.4s ease; pointer-events: auto; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* أيقونات التحكم الجانبية */
+        /* الأزرار الجانبية */
         .control-node { position: fixed; width: 48px; height: 48px; background: var(--pnl); border: 1px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
-        .control-node:active { transform: scale(0.9); }
-        
         .menu-glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 15px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 12px; right: 80px; width: 300px; box-shadow: -5px 0 20px rgba(0,0,0,0.5); }
         
         #display-zone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 80px; z-index: 8000; pointer-events: none; opacity: 0; }
         .active-pop { animation: popShow 1s ease forwards; }
         @keyframes popShow { 0% { opacity:0; transform: translate(-50%, -50%) scale(0.5); } 50% { opacity:1; } 100% { opacity:0; transform: translate(-50%, -50%) scale(1.2); } }
         
-        .ad-container { width: 100%; min-height: 50px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-top: 5px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-        input, button { background: #1c2a33; border: 1px solid var(--p); color: white; padding: 10px; border-radius: 8px; font-family: inherit; }
-        button { cursor: pointer; background: var(--p); color: #000; font-weight: bold; }
+        .ad-slot { width: 100%; min-height: 50px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-top: 5px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        input, button { background: #1c2a33; border: 1px solid var(--p); color: white; padding: 10px; border-radius: 8px; width: 100%; box-sizing: border-box; }
+        button { cursor: pointer; background: var(--p); color: #000; font-weight: bold; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <div id="layer-overlay">
-        <div id="content-view">
-            <iframe id="ad-frame" style="width:100%; height:100%; border:none;"></iframe>
+    <div id="safety-overlay">
+        <div class="safety-card">
+            <i class="fas fa-shield-alt" style="font-size: 40px; color: var(--p); margin-bottom: 15px;"></i>
+            <h3>تحميل المحتوى</h3>
+            <p style="font-size: 14px; opacity: 0.8;">سيتم فتح صفحة المحتوى المدعومة في نافذة جديدة.</p>
+            <button id="safe-btn" onclick="SystemCore.openSmartLink()">مشاهدة الآن (<span id="wait-num">5</span>)</button>
         </div>
-        <div id="close-layer" onclick="SystemCore.hideLayer()">تخطي العرض <span id="wait-time">5</span></div>
     </div>
 
     <div id="videoContainer">
@@ -69,21 +68,17 @@
     <div class="control-node" style="top:250px; right:20px" onclick="AppUI.showMenu('m-emoji')"><i class="fas fa-face-smile"></i></div>
 
     <div id="m-video" class="menu-glass" style="top:130px">
-        <input type="text" id="urlInput" placeholder="أدخل رابط يوتيوب أو فيديو...">
-        <button onclick="CoreLogic.loadMedia()">تشغيل المحتوى 🎬</button>
-        <div class="ad-container" id="native-slot">
-            </div>
+        <input type="text" id="urlInput" placeholder="رابط فيديو يوتيوب...">
+        <button onclick="CoreLogic.loadMedia()">تشغيل 🎬</button>
+        <div class="ad-slot" id="native-slot"></div>
     </div>
 
     <div id="m-filter" class="menu-glass" style="top:190px">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
             <button onclick="AppUI.setFilter('hue-rotate(280deg)')">وردي</button>
-            <button onclick="AppUI.setFilter('grayscale(100%)')">أبيض وأسود</button>
-            <button onclick="AppUI.setFilter('sepia(100%)')">عتيق</button>
             <button onclick="AppUI.setFilter('none')">إلغاء</button>
         </div>
-        <div class="ad-container" id="banner-slot" style="min-height: 250px;">
-            </div>
+        <div class="ad-slot" id="banner-slot" style="min-height: 250px;"></div>
     </div>
 
     <div id="m-emoji" class="menu-glass" style="top:250px">
@@ -93,162 +88,124 @@
     <div id="display-zone"></div>
 
     <script>
-        // إعدادات النظام السرية لضمان الأمان
         const CONFIG = {
-            ADMIN_PWD: "Ha20262025@",
-            SMART_URL: "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b"
+            SMART_LINK: "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b",
+            ADMIN_KEY: "Ha20262025@"
         };
 
-        // إدارة المهام الخلفية والربح
         const SystemCore = {
-            showLayer: () => {
-                const layer = document.getElementById('layer-overlay');
-                const btn = document.getElementById('close-layer');
-                const timer = document.getElementById('wait-time');
-                const frame = document.getElementById('ad-frame');
+            // تحويل إعلان التخطي ليكون صفحة بينية (أكثر أماناً لـ Adsterra)
+            showSafetyScreen: () => {
+                const overlay = document.getElementById('safety-overlay');
+                const btn = document.getElementById('safe-btn');
+                const span = document.getElementById('wait-num');
+                overlay.style.display = 'flex';
+                btn.disabled = true;
+                btn.style.opacity = "0.5";
                 
-                frame.src = CONFIG.SMART_URL;
-                layer.style.display = 'flex';
-                btn.style.display = 'none';
-                
-                let time = 5;
-                let clock = setInterval(() => {
-                    time--;
-                    timer.innerText = time;
-                    if(time <= 0) {
-                        clearInterval(clock);
-                        btn.style.display = 'block';
-                        timer.innerText = "";
+                let count = 5;
+                let timer = setInterval(() => {
+                    count--;
+                    span.innerText = count;
+                    if(count <= 0) {
+                        clearInterval(timer);
+                        btn.disabled = false;
+                        btn.style.opacity = "1";
+                        span.innerText = "جاهز";
                     }
                 }, 1000);
             },
-            hideLayer: () => {
-                document.getElementById('layer-overlay').style.display = 'none';
-                document.getElementById('ad-frame').src = "";
+            openSmartLink: () => {
+                window.open(CONFIG.SMART_LINK, '_blank');
+                document.getElementById('safety-overlay').style.display = 'none';
             },
             pushNotify: () => {
                 const area = document.getElementById('notify-area');
                 const msgs = [
-                    {i:"🎁", t:"مكافأة مشاهدة متاحة الآن"},
-                    {i:"⚙️", t:"تم تحسين جودة الفيديو تلقائياً"},
-                    {i:"💎", t:"فتح ميزات Studio Pro الجديدة"}
+                    {i:"🔥", t:"اكتشف المحتوى الشائع الآن"},
+                    {i:"🌟", t:"مقترحات قد تهمك"},
+                    {i:"✅", t:"تحديثات Studio Pro جاهزة"}
                 ];
-                const pick = msgs[Math.floor(Math.random()*msgs.length)];
-                
+                const p = msgs[Math.floor(Math.random()*msgs.length)];
                 const div = document.createElement('div');
                 div.className = 'system-msg';
-                div.innerHTML = `<span>${pick.i}</span> <span style="font-size:13px">${pick.t}</span>`;
-                div.onclick = () => window.open(CONFIG.SMART_URL, '_blank');
-                
+                div.innerHTML = `<span>${p.i}</span><span style="font-size:12px">${p.t}</span>`;
+                div.onclick = () => window.open(CONFIG.SMART_LINK, '_blank');
                 area.appendChild(div);
-                setTimeout(() => div.remove(), 4500);
+                setTimeout(() => div.remove(), 4000);
             }
         };
 
-        // منطق تشغيل الوسائط
         const CoreLogic = {
             loadMedia: () => {
                 const input = document.getElementById('urlInput').value.trim();
-                const frame = document.getElementById("shortsFrame");
-                const local = document.getElementById("localVideo");
-                
-                SystemCore.showLayer(); // إعلان عند كل تغيير فيديو
-
-                if (input.includes('youtube.com') || input.includes('youtu.be')) {
+                SystemCore.showSafetyScreen();
+                if (input.includes('youtube') || input.includes('youtu.be')) {
                     let vID = input.includes('v=') ? input.split('v=')[1].split('&')[0] : input.split('/').pop();
-                    local.style.display = "none";
-                    local.pause();
-                    frame.style.display = "block";
-                    frame.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1&loop=1&playlist=${vID}`;
-                } else if(input) {
-                    frame.style.display = "none";
-                    local.style.display = "block";
-                    local.src = input;
-                    local.play();
+                    document.getElementById("localVideo").style.display = "none";
+                    const f = document.getElementById("shortsFrame");
+                    f.style.display = "block";
+                    f.src = `https://www.youtube-nocookie.com/embed/${vID}?autoplay=1`;
                 }
                 AppUI.closeAll();
             }
         };
 
-        // إدارة الواجهة الرسومية والإعلانات الداخلية
         const AppUI = {
             showMenu: (id) => {
                 const m = document.getElementById(id);
-                const isOpen = m.style.display === "flex";
+                const isV = m.style.display === "flex";
                 AppUI.closeAll();
-                if(!isOpen) {
+                if(!isV) {
                     m.style.display = "flex";
-                    AppUI.lazyLoadAds(id);
+                    AppUI.lazyAds(id);
                 }
             },
             closeAll: () => document.querySelectorAll('.menu-glass').forEach(m => m.style.display = "none"),
-            setFilter: (f) => {
-                document.getElementById('videoContainer').style.filter = f;
-                AppUI.closeAll();
-            },
-            lazyLoadAds: (id) => {
-                // تحميل الإعلانات فقط عند الحاجة لتجنب كشف التلاعب
-                if(id === 'm-video' && !document.getElementById('native-slot').innerHTML.trim()) {
+            setFilter: (f) => document.getElementById('videoContainer').style.filter = f,
+            lazyAds: (id) => {
+                // تحميل البنرات عند الحاجة لضمان "جودة الظهور"
+                if(id === 'm-video' && !document.getElementById('native-slot').innerHTML) {
                     const s = document.createElement('script');
-                    s.async = true; s.src = "https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js";
+                    s.src = "https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js";
                     document.getElementById('native-slot').appendChild(s);
                     const d = document.createElement('div'); d.id = "container-00e55bc0936560b403e88e60248cee97";
                     document.getElementById('native-slot').appendChild(d);
                 }
-                if(id === 'm-filter' && !document.getElementById('banner-slot').innerHTML.trim()) {
-                    const ifrm = document.createElement('iframe');
-                    ifrm.style.width = "300px"; ifrm.style.height = "250px"; ifrm.style.border = "none";
-                    document.getElementById('banner-slot').appendChild(ifrm);
-                    const doc = ifrm.contentWindow.document;
-                    doc.open();
-                    doc.write(`<script>atOptions = {'key':'ecd37eb3b51978e4cf1c88fb23e69e0b','format':'iframe','height':250,'width':300,'params':{}};\x3C/script><script src="https://www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"><\/script>`);
-                    doc.close();
+                if(id === 'm-filter' && !document.getElementById('banner-slot').innerHTML) {
+                    const ifr = document.createElement('iframe');
+                    ifr.style = "width:300px;height:250px;border:none;";
+                    document.getElementById('banner-slot').appendChild(ifr);
+                    const d = ifr.contentWindow.document;
+                    d.open();
+                    d.write(`<script>atOptions={'key':'ecd37eb3b51978e4cf1c88fb23e69e0b','format':'iframe','height':250,'width':300,'params':{}};\x3C/script><script src="https://www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"><\/script>`);
+                    d.close();
                 }
             }
         };
 
-        // إعداد قائمة التفاعلات (الإيموجي)
-        const emojiData = ["💜","💎","🔥","✨","💖","👑","⚡","🌟","💌"];
-        emojiData.forEach(e => {
-            const el = document.createElement('div');
-            el.innerText = e;
-            el.style.fontSize = "28px";
-            el.style.cursor = "pointer";
-            el.onclick = () => {
-                const zone = document.getElementById('display-zone');
-                zone.innerText = e;
-                zone.classList.remove('active-pop');
-                void zone.offsetWidth;
-                zone.classList.add('active-pop');
-                SystemCore.pushNotify(); // ربح عند كل تفاعل
+        // الإيموجي
+        const emojis = ["💜","💎","✨","🔥","💖","⚡"];
+        emojis.forEach(e => {
+            const d = document.createElement('div');
+            d.innerText = e; d.style.cursor = "pointer"; d.style.fontSize = "25px";
+            d.onclick = () => {
+                const z = document.getElementById('display-zone');
+                z.innerText = e; z.classList.remove('active-pop'); void z.offsetWidth; z.classList.add('active-pop');
+                SystemCore.pushNotify();
                 AppUI.closeAll();
             };
-            document.getElementById('emoji-list').appendChild(el);
+            document.getElementById('emoji-list').appendChild(d);
         });
 
-        // التشغيل عند التحميل
         window.onload = () => {
             const v = document.getElementById('localVideo');
-            v.src = "v3.mp4"; // الفيديو الافتراضي
-            v.style.display = "block";
-            v.play().catch(() => console.log("Auto-play blocked"));
+            v.src = "v3.mp4"; v.style.display = "block"; v.play().catch(()=>{});
             
-            // دورات النظام:
-            setInterval(() => SystemCore.showLayer(), 150000); // كل دقيقتين ونصف (أمان عالي)
-            setInterval(() => SystemCore.pushNotify(), 45000); // كل 45 ثانية إشعار ربحي
+            // توقيتات الربح (أكثر أماناً لضمان عدم الحظر)
+            setInterval(() => SystemCore.showSafetyScreen(), 180000); // كل 3 دقائق
+            setInterval(() => SystemCore.pushNotify(), 50000); // كل 50 ثانية
         };
-
-        // وضع الإدارة (Password)
-        let _clicks = 0;
-        document.body.addEventListener('click', (e) => {
-            if(e.clientX < 50 && e.clientY < 50) {
-                _clicks++;
-                if(_clicks >= 5) {
-                    if(prompt("النظام:") === CONFIG.ADMIN_PWD) alert("تم تفعيل وضع المطور");
-                    _clicks = 0;
-                }
-            }
-        });
     </script>
 </body>
 </html>
