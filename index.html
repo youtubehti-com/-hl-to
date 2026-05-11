@@ -44,13 +44,13 @@
         .node { position: fixed; width: 50px; height: 50px; background: var(--pnl); border: 2px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
         .glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 20px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 10px; right: 80px; width: 220px; }
         
-        /* منطقة الإيموجي الكبير - تعديل الحجم والتأثير */
+        /* منطقة الإيموجي الكبير */
         #eZone { 
             position: fixed; 
             top: 50%; 
             left: 50%; 
             transform: translate(-50%, -50%) scale(0); 
-            font-size: 80px; /* حجم كبير جداً عند الظهور */
+            font-size: 80px; 
             z-index: 8000; 
             pointer-events: none; 
             opacity: 0; 
@@ -63,6 +63,14 @@
             0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 
             30% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; } 
             100% { transform: translate(-50%, -50%) scale(2); opacity: 0; } 
+        }
+
+        /* تنسيق زر الهدية */
+        .gift-node { color: #ff4757; border-color: #ff4757; animation: pulse 1.5s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
         }
     </style>
 </head>
@@ -84,11 +92,17 @@
         </div>
     </div>
 
+    <!-- قائمة الأزرار الجانبية -->
     <div style="display:flex; flex-direction:column; gap:10px;">
         <div class="node" style="top:100px; right:20px" onclick="UI.toggle('pSettings')"><i class="fas fa-video"></i></div>
         <div class="node" style="top:160px; right:20px" onclick="UI.toggle('pFilter')"><i class="fas fa-filter"></i></div>
         <div class="node" style="top:220px; right:20px; color:var(--g); border-color:var(--g)" onclick="App.triggerMagic()"><i class="fas fa-wand-sparkles"></i></div>
         <div class="node" style="top:280px; right:20px" onclick="UI.toggle('pEmoji')"><i class="fa-solid fa-face-smile"></i></div>
+        
+        <!-- زر الهدايا الجديد -->
+        <div class="node gift-node" style="top:340px; right:20px" onclick="window.open('https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b', '_blank')">
+            <i class="fas fa-gift"></i>
+        </div>
     </div>
 
     <div id="pSettings" class="glass" style="top:100px">
@@ -135,7 +149,7 @@
                 const z = document.getElementById("eZone");
                 z.innerText = emoji; 
                 z.classList.remove("pop"); 
-                void z.offsetWidth; // إعادة تشغيل الأنيميشن
+                void z.offsetWidth; 
                 z.classList.add("pop");
             },
             triggerMagic: () => {
