@@ -3,150 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Studio Pro - Revenue Edition</title>
+    <title>Studio Pro - Clean Edition</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         :root {
             --p: #e2d1f9; --pk: #ffdae9; --g: #ffd700; --b: #00d2ff;
-            --bg: #0b141a; --pnl: rgba(23, 33, 39, 0.98); --txt: white; --wp: 0.1;
+            --bg: #0b141a; --pnl: rgba(23, 33, 39, 0.98); --txt: white;
         }
         body {
             margin: 0; background: var(--bg); color: var(--txt);
-            font-family: 'Segoe UI', sans-serif; height: 100vh;
-            overflow: hidden; transition: 0.5s; user-select: none;
+            font-family: 'Segoe UI', sans-serif; 
+            overflow-y: auto; 
+            user-select: none;
         }
         
-        #videoContainer { position: fixed; inset: 0; z-index: 1; background: #000; display: flex; justify-content: center; align-items: center; }
+        #mainContent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        #videoContainer { 
+            width: 100%; 
+            height: 80vh; 
+            background: #000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            position: relative;
+        }
+
         #shortsFrame, #localVideo { width: 100%; height: 100%; border: none; display: none; object-fit: cover; }
         
-        /* [1] Social Bar Ad - تعديل مكانه في الثلث العلوي */
-        #socialBarContainer {
-            position: fixed; top: 10%; left: 0; width: 100%; z-index: 10000;
-            backdrop-filter: blur(5px); text-align: center; pointer-events: auto;
-        }
+        .ad-section { width: 100%; display: flex; justify-content: center; padding: 15px 0; background: #000; }
 
-        /* [4] Native Widget as Toast Notification */
-        #toastAdContainer {
-            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-            z-index: 9999; width: 90%; max-width: 350px;
-            background: var(--pnl); border-radius: 15px; border: 1px solid var(--p);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); display: none;
-            overflow: hidden; animation: toastUp 0.5s ease-out;
-        }
-        @keyframes toastUp { from { bottom: -100px; opacity: 0; } to { bottom: 80px; opacity: 1; } }
-        .toast-header { background: var(--p); color: #000; padding: 5px 10px; font-size: 10px; font-weight: bold; }
-
-        /* [3] Floating Engagement Ad (Pulse) */
-        #floatingPulse {
-            position: fixed; bottom: 20px; left: 20px; width: 50px; height: 50px;
-            background: var(--g); border-radius: 50%; z-index: 9998;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 15px var(--g); animation: pulse 2s infinite; cursor: pointer;
-        }
-        #closePulse {
-            position: absolute; top: -5px; right: -5px; background: #000; color: #fff;
-            border-radius: 50%; width: 18px; height: 18px; font-size: 12px;
-            display: none; align-items: center; justify-content: center;
-        }
-        @keyframes pulse { 
-            0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 25px var(--g); } 100% { transform: scale(1); } 
-        }
-
-        /* تنسيقات الواجهة الأصلية */
-        #wp-bg { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: var(--wp); background-image: url('https://web.whatsapp.com/img/bg-chat-tile-dark_a4be512e719549d10e05527f6a012d27.png'); }
+        /* واجهة التحكم */
         #sT { position: fixed; top: 0; left: 0; width: 60px; height: 60px; z-index: 10001; cursor: pointer; }
         .node { position: fixed; width: 50px; height: 50px; background: var(--pnl); border: 2px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
         .glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 20px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 10px; right: 80px; width: 220px; }
-        #eZone { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; z-index: 8000; pointer-events: none; opacity: 0; text-align: center; width: 90%; }
-        .pop { animation: cP 1.5s ease-out forwards; }
-        @keyframes cP { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.4); opacity: 0; } }
+        
+        /* منطقة الإيموجي الكبير - تعديل الحجم والتأثير */
+        #eZone { 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%) scale(0); 
+            font-size: 80px; /* حجم كبير جداً عند الظهور */
+            z-index: 8000; 
+            pointer-events: none; 
+            opacity: 0; 
+            text-align: center; 
+            width: 100%; 
+        }
+        .pop { animation: cP 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        @keyframes cP { 
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 
+            30% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; } 
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; } 
+        }
     </style>
 </head>
 <body>
 
-    <div id="socialBarContainer">
-        <script src="https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js"></script>
-    </div>
-
-    <div id="toastAdContainer">
-        <div class="toast-header">مقترح لك (نصيحة اليوم)</div>
-        <div id="container-00e55bc0936560b403e88e60248cee97"></div>
-        <script async="async" data-cfasync="false" src="https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js"></script>
-    </div>
-
-    <div id="floatingPulse" onclick="Revenue.openSmartLink()">
-        <i class="fas fa-gift"></i>
-        <div id="closePulse" onclick="event.stopPropagation(); this.parentElement.style.display='none'"><i class="fas fa-times"></i></div>
-    </div>
+    <script src="https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js"></script>
 
     <div id="sT"></div>
-    <div id="videoContainer">
-        <iframe id="shortsFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <video id="localVideo" controls autoplay loop playsinline></video>
-    </div>
 
-    <div id="wp-bg"></div>
+    <div id="mainContent">
+        <div id="videoContainer">
+            <iframe id="shortsFrame" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <video id="localVideo" controls autoplay loop playsinline></video>
+        </div>
+
+        <div class="ad-section">
+            <div id="container-00e55bc0936560b403e88e60248cee97"></div>
+            <script async="async" data-cfasync="false" src="https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js"></script>
+        </div>
+    </div>
 
     <div style="display:flex; flex-direction:column; gap:10px;">
-        <div class="node" style="top:130px; right:20px" onclick="UI.toggle('pSettings')"><i class="fas fa-video"></i></div>
-        <div class="node" style="top:190px; right:20px" onclick="Revenue.openSmartLink(); UI.toggle('pFilter')"><i class="fas fa-filter"></i></div>
-        <div class="node" style="top:250px; right:20px; color:var(--g); border-color:var(--g)" onclick="Revenue.triggerPopunder(); UI.toggle('pMagic')"><i class="fas fa-wand-sparkles"></i></div>
-        <div class="node" style="top:310px; right:20px" onclick="UI.toggle('pEmoji')"><i class="fa-solid fa-face-smile"></i></div>
+        <div class="node" style="top:100px; right:20px" onclick="UI.toggle('pSettings')"><i class="fas fa-video"></i></div>
+        <div class="node" style="top:160px; right:20px" onclick="UI.toggle('pFilter')"><i class="fas fa-filter"></i></div>
+        <div class="node" style="top:220px; right:20px; color:var(--g); border-color:var(--g)" onclick="App.triggerMagic()"><i class="fas fa-wand-sparkles"></i></div>
+        <div class="node" style="top:280px; right:20px" onclick="UI.toggle('pEmoji')"><i class="fa-solid fa-face-smile"></i></div>
     </div>
 
-    <div id="pSettings" class="glass" style="top:130px">
+    <div id="pSettings" class="glass" style="top:100px">
         <input type="text" id="ytUrl" placeholder="رابط يوتيوب...">
         <button onclick="App.applyMedia()">تشغيل 🎬</button>
     </div>
 
-    <div id="pFilter" class="glass" style="top:190px">
+    <div id="pFilter" class="glass" style="top:160px">
         <button onclick="UI.filter('hue-rotate(280deg)')">🌸 فلتر وردي</button>
+        <button onclick="UI.filter('sepia(0.8)')">🎞️ كلاسيك</button>
         <button onclick="UI.filter('none')">❌ إلغاء</button>
     </div>
 
-    <div id="pMagic" class="glass" style="top:250px">
-        <input type="number" id="emojiCount" value="5">
-        <button onclick="App.triggerMagic()">إطلاق السحر 🧚🏼‍♂️</button>
-        <hr>
-        <div style="transform: scale(0.7); origin: center;">
-            <script>
-                atOptions = { 'key' : 'ecd37eb3b51978e4cf1c88fb23e69e0b', 'format' : 'iframe', 'height' : 250, 'width' : 300, 'params' : {} };
-            </script>
-            <script src="https://www.highperformanceformat.com/ecd37eb3b51978e4cf1c88fb23e69e0b/invoke.js"></script>
-        </div>
-    </div>
-
-    <div id="pEmoji" class="glass" style="top:310px">
+    <div id="pEmoji" class="glass" style="top:280px">
         <div id="emojiGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;"></div>
     </div>
 
     <div id="eZone"></div>
 
-    <script src="https://pl29310381.profitablecpmratenetwork.com/f3/f1/14/f3f11422479a989121f35119a95ea880.js"></script>
-
     <script>
         const _0xP = "Ha20262025@";
-        const SMART_LINK = "https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b";
         
-        const Revenue = {
-            // فتح الرابط الذكي (عند الضغط على الفلتر أو الهدية)
-            openSmartLink: () => {
-                window.open(SMART_LINK, '_blank');
-            },
-            // استدعاء البوب أندر (عند العصا السحرية)
-            triggerPopunder: () => {
-                console.log("Popunder Triggered via Magic Wand");
-                // الكود مدمج تلقائياً عبر السكريبت الخارجي
-            },
-            // إظهار إشعار Toast لضمان أرباح المشاهدة
-            showToastAd: () => {
-                const toast = document.getElementById('toastAdContainer');
-                toast.style.display = 'block';
-                setTimeout(() => { toast.style.display = 'none'; }, 7000); // يبقى 7 ثوانٍ لضمان الـ Impression
-            }
-        };
-
         const App = {
             applyMedia: () => {
                 const input = document.getElementById("ytUrl").value.trim();
@@ -171,13 +135,12 @@
                 const z = document.getElementById("eZone");
                 z.innerText = emoji; 
                 z.classList.remove("pop"); 
-                void z.offsetWidth; 
+                void z.offsetWidth; // إعادة تشغيل الأنيميشن
                 z.classList.add("pop");
             },
             triggerMagic: () => {
                 UI.hideAll();
                 App.visual("✨⭐⚡");
-                Revenue.showToastAd(); // إظهار إعلان عند السحر
             }
         };
 
@@ -195,13 +158,13 @@
             }
         };
 
-        // إعداد الإيموجي
         const emojis = ["💜","💌","💎","😍","🔥","✨","❤️","💖","⚡"];
         const grid = document.getElementById("emojiGrid");
         emojis.forEach(e => {
             let btn = document.createElement("div");
             btn.innerText = e;
             btn.style.cursor = "pointer";
+            btn.style.fontSize = "24px";
             btn.onclick = () => { App.visual(e); UI.hideAll(); };
             grid.appendChild(btn);
         });
@@ -211,17 +174,8 @@
             local.src = "v3.mp4";
             local.style.display = "block";
             local.play().catch(e => {});
-
-            // إظهار زر الإغلاق للنبض بعد 5 ثوانٍ (صمام أمان)
-            setTimeout(() => {
-                document.getElementById('closePulse').style.display = 'flex';
-            }, 5000);
-
-            // تفعيل الـ Toast دورياً كل 30 ثانية لزيادة الأرباح
-            setInterval(() => Revenue.showToastAd(), 30000);
         };
 
-        // تفعيل لوحة الإدارة
         let _sec = 0;
         document.getElementById('sT').onclick = () => {
             _sec++; if(_sec >= 5) { 
