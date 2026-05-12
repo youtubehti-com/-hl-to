@@ -17,6 +17,20 @@
             overflow-y: auto; 
             user-select: none;
         }
+
+        /* --- تنسيق الـ Social Hint المدمج --- */
+        .social-hint{
+            position:fixed;
+            top:20px;
+            right:20px;
+            background:#111827;
+            color:#fff;
+            padding:10px 14px;
+            border-radius:10px;
+            font-size:13px;
+            box-shadow:0 10px 20px rgba(0,0,0,0.3);
+            z-index:9999;
+        }
         
         #mainContent {
             display: flex;
@@ -27,7 +41,7 @@
 
         #videoContainer { 
             width: 100%; 
-            height: 80vh; 
+            height: 75vh; 
             background: #000; 
             display: flex; 
             justify-content: center; 
@@ -37,25 +51,24 @@
 
         #shortsFrame, #localVideo { width: 100%; height: 100%; border: none; display: none; object-fit: cover; }
         
-        .ad-section { width: 100%; display: flex; justify-content: center; padding: 15px 0; background: #000; }
+        .ad-section { 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            padding: 20px 0; 
+            background: #0b141a; 
+            min-height: 300px;
+        }
 
         /* واجهة التحكم */
         #sT { position: fixed; top: 0; left: 0; width: 60px; height: 60px; z-index: 10001; cursor: pointer; }
         .node { position: fixed; width: 50px; height: 50px; background: var(--pnl); border: 2px solid var(--p); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; color: var(--p); transition: 0.3s; }
         .glass { position: fixed; background: var(--pnl); border: 1px solid var(--p); border-radius: 20px; padding: 15px; display: none; z-index: 9000; flex-direction: column; gap: 10px; right: 80px; width: 220px; }
         
-        /* منطقة الإيموجي الكبير */
         #eZone { 
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%) scale(0); 
-            font-size: 80px; 
-            z-index: 8000; 
-            pointer-events: none; 
-            opacity: 0; 
-            text-align: center; 
-            width: 100%; 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); 
+            font-size: 80px; z-index: 8000; pointer-events: none; opacity: 0; text-align: center; width: 100%; 
         }
         .pop { animation: cP 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
         
@@ -65,7 +78,6 @@
             100% { transform: translate(-50%, -50%) scale(2); opacity: 0; } 
         }
 
-        /* تنسيق زر الهدية */
         .gift-node { color: #ff4757; border-color: #ff4757; animation: pulse 1.5s infinite; }
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
@@ -76,6 +88,12 @@
 </head>
 <body>
 
+    <!-- Social hint (شكلي فقط كما طلبت) -->
+    <div class="social-hint">
+        🔔 جاري تحميل التفاعل...
+    </div>
+
+    <!-- سكريبت السوشيال بار الحقيقي المدمج -->
     <script src="https://pl29310384.profitablecpmratenetwork.com/1f/4d/fc/1f4dfcd01832df6433005c331053354d.js"></script>
 
     <div id="sT"></div>
@@ -87,6 +105,7 @@
         </div>
 
         <div class="ad-section">
+            <!-- كود إعلان Native -->
             <div id="container-00e55bc0936560b403e88e60248cee97"></div>
             <script async="async" data-cfasync="false" src="https://pl29310385.profitablecpmratenetwork.com/00e55bc0936560b403e88e60248cee97/invoke.js"></script>
         </div>
@@ -94,13 +113,16 @@
 
     <!-- قائمة الأزرار الجانبية -->
     <div style="display:flex; flex-direction:column; gap:10px;">
-        <div class="node" style="top:100px; right:20px" onclick="UI.toggle('pSettings')"><i class="fas fa-video"></i></div>
+        <div class="node" style="top:100px; right:20px" onclick="window.location.href='intent://youtube.com/channel/UClGwn0wPDh-MJJRLETLzOpg?si=RolYnl4iEsQQAkQK#Intent;scheme=https;package=com.google.android.youtube;end'">
+            <i class="fas fa-video"></i>
+        </div>
+
         <div class="node" style="top:160px; right:20px" onclick="UI.toggle('pFilter')"><i class="fas fa-filter"></i></div>
         <div class="node" style="top:220px; right:20px; color:var(--g); border-color:var(--g)" onclick="App.triggerMagic()"><i class="fas fa-wand-sparkles"></i></div>
         <div class="node" style="top:280px; right:20px" onclick="UI.toggle('pEmoji')"><i class="fa-solid fa-face-smile"></i></div>
         
-        <!-- زر الهدايا الجديد -->
-        <div class="node gift-node" style="top:340px; right:20px" onclick="window.open('https://www.profitablecpmratenetwork.com/p5xdvi8igm?key=bb15e730477910952e414434bb03be5b', '_blank')">
+        <!-- زر الهدايا -->
+        <div class="node gift-node" style="top:340px; right:20px" onclick="window.open('https://youtubehti-com.github.io/-uhts/', '_blank')">
             <i class="fas fa-gift"></i>
         </div>
     </div>
@@ -185,7 +207,7 @@
 
         window.onload = () => {
             const local = document.getElementById("localVideo");
-            local.src = "v3.mp4";
+            local.src = "v3.mp4"; 
             local.style.display = "block";
             local.play().catch(e => {});
         };
